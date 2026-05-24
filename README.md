@@ -2,10 +2,6 @@
 
 Multi-agent reinforcement learning experiments for competitive Pong environments using PettingZoo and PyTorch.
 
-<p align="center">
-  <img src="assets/gifs/training-demo.gif" width="700"/>
-</p>
-
 
 
 ## Motivation
@@ -86,11 +82,15 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+Install Atari ROMs:
+
+```bash
+AutoROM --accept-license
+```
+
 
 
 ## Requirements
-
-Example `requirements.txt`:
 
 ```text
 torch
@@ -100,27 +100,138 @@ gymnasium
 pettingzoo[atari]
 ale-py
 pygame
+autorom
 ```
 
 
 
-## Method
+## Methodology
 
-### Observation Pipeline
-- Raw RGB Atari frames
-- Frame preprocessing and resizing
-- CNN-based feature extraction
+### Environment Setup
 
-### Learning Strategy
-- Deep Q-Network (DQN)
-- Experience replay
-- Target network synchronization
-- Epsilon-greedy exploration
+The project uses the PettingZoo Atari Pong environment as a competitive multi-agent benchmark. Two independent agents interact within the same environment and learn through repeated self-play episodes.
 
-### Environment
-- PettingZoo Atari Pong
-- Two-agent competitive setting
-- Self-play training loop
+Observations are received as raw RGB image frames with shape `(210, 160, 3)` directly from the Atari simulator. Each agent selects actions from a discrete six-action control space corresponding to standard Pong movement and firing operations.
+
+
+
+### Observation Processing
+
+Raw observations are preprocessed before being passed to the policy network.
+
+The preprocessing pipeline includes:
+- cropping irrelevant frame regions
+- resizing frames to `84 × 84`
+- preserving RGB channel information
+- converting image layouts from HWC to CHW tensor format
+
+This reduces computational complexity while retaining sufficient spatial information for policy learning.
+
+
+
+### Deep Q-Network Architecture
+
+The policy network is implemented using a convolutional Deep Q-Network (DQN).
+
+The architecture consists of:
+- stacked convolutional layers for visual feature extraction
+- ReLU activation functions
+- fully connected layers for Q-value estimation
+
+The convolutional encoder enables the agent to learn spatial motion patterns directly from visual observations without handcrafted features.
+
+The network outputs Q-values for all valid actions:
+- NOOP
+- FIRE
+- RIGHT
+- LEFT
+- FIRE + RIGHT
+- FIRE + LEFT
+
+
+
+### Experience Replay
+
+Training transitions are stored inside a replay buffer.
+
+Each transition contains:
+- current observation
+- selected action
+- reward
+- next observation
+- terminal state indicator
+
+Mini-batches are sampled uniformly from replay memory during optimization. This reduces temporal correlation between consecutive samples and improves training stability.
+
+
+
+### Target Network Synchronization
+
+A separate target network is maintained alongside the online policy network.
+
+The target network parameters are periodically synchronized with the policy network to stabilize temporal difference learning and reduce oscillatory Q-value updates during optimization.
+
+
+
+### Exploration Strategy
+
+The agents use epsilon-greedy exploration during training.
+
+At the beginning of training:
+- actions are sampled randomly with high probability
+
+As training progresses:
+- epsilon gradually decays
+- the policy increasingly exploits learned Q-values
+
+This balances:
+- exploration of unseen state-action pairs
+- exploitation of learned control strategies
+
+
+
+### Optimization
+
+The model is optimized using:
+- Mean Squared Error (MSE) loss
+- Adam optimizer
+- gradient clipping for training stability
+
+The temporal difference target is computed using the Bellman update equation.
+
+For Q-learning targets:
+
+:contentReference[oaicite:0]{index=0}
+
+where:
+- `r` is the observed reward
+- `γ` is the discount factor
+- `Q_target` is the target network estimate
+
+
+
+### Self-Play Training
+
+Both agents are trained within the same competitive environment through repeated self-play interactions.
+
+This setup enables:
+- adaptive policy evolution
+- competitive behavior emergence
+- dynamic strategy learning
+
+without requiring manually scripted opponents or expert demonstrations.
+
+
+
+### Model Persistence
+
+The repository includes checkpoint saving and loading utilities for:
+- policy network weights
+- target network weights
+- optimizer state
+- exploration parameters
+
+This allows interrupted training sessions to be resumed and enables reproducible evaluation experiments.
 
 
 
@@ -165,17 +276,6 @@ checkpoints/
 | Learning Method | DQN |
 | Training Mode | Self-Play |
 
-Add:
-- gameplay GIFs
-- reward curves
-- qualitative behavior examples
-
-inside:
-
-```text
-assets/
-```
-
 
 
 ## Repository Structure
@@ -183,7 +283,6 @@ assets/
 ```text
 Multi-Agent-Pong-RL/
 │
-├── assets/
 ├── checkpoints/
 │
 ├── src/
@@ -205,4 +304,3 @@ Multi-Agent-Pong-RL/
 - Frame stacking
 - Curriculum self-play
 - Evaluation benchmarking
-
