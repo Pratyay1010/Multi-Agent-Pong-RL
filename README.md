@@ -6,7 +6,7 @@ Multi-agent reinforcement learning experiments for competitive Pong environments
   <img src="assets/gifs/training-demo.gif" width="700"/>
 </p>
 
----
+
 
 ## Motivation
 
@@ -23,7 +23,7 @@ Key areas explored:
 
 The repository was designed with a minimal research-oriented structure focused on readability, modularity, and reproducible experimentation.
 
----
+
 
 ## Overview
 
@@ -35,7 +35,7 @@ The repository includes:
 - Self-play multi-agent training
 - Model checkpointing utilities
 
----
+
 
 ## Architecture
 
@@ -51,14 +51,14 @@ src/
     └── train_agent.py
 ```
 
----
+
 
 ## Installation
 
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/Multi-Agent-Pong-RL.git
+git clone https://github.com/Pratyay1010/Multi-Agent-Pong-RL.git
 cd Multi-Agent-Pong-RL
 ```
 
@@ -86,7 +86,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
----
+
 
 ## Requirements
 
@@ -102,7 +102,7 @@ ale-py
 pygame
 ```
 
----
+
 
 ## Method
 
@@ -122,7 +122,7 @@ pygame
 - Two-agent competitive setting
 - Self-play training loop
 
----
+
 
 ## Training
 
@@ -132,7 +132,7 @@ Run training with:
 python -m src.training.train_agent
 ```
 
----
+
 
 ## Model Checkpoints
 
@@ -142,7 +142,7 @@ Saved models are stored in:
 checkpoints/
 ```
 
----
+
 
 ## Tech Stack
 
@@ -153,12 +153,12 @@ checkpoints/
 - OpenCV
 - NumPy
 
----
+
 
 ## Results
 
 | Metric | Value |
-|---|---|
+|||
 | Environment | Atari Pong |
 | Observation Type | RGB Frames |
 | Action Space | Discrete (6) |
@@ -176,7 +176,7 @@ inside:
 assets/
 ```
 
----
+
 
 ## Repository Structure
 
@@ -196,7 +196,7 @@ Multi-Agent-Pong-RL/
 └── .gitignore
 ```
 
----
+
 
 ## Future Improvements
 
@@ -206,4 +206,3 @@ Multi-Agent-Pong-RL/
 - Curriculum self-play
 - Evaluation benchmarking
 
----
